@@ -1,9 +1,9 @@
-rom random import *
+from random import *
 import numpy as np
 from numpy.linalg import solve
 from scipy.stats import f, t
 from functools import partial
-
+from itertools import compress
 
 class FractionalExperiment:
 
@@ -138,6 +138,15 @@ class FractionalExperiment:
         print('Коефіцієнти {} статистично незначущі, тому ми виключаємо їх з рівняння.'.format(
             [i for i in B if i not in final_k]))
 
+         unimportance = [True if t < t_student else False for t in ts]
+        b_to_print = list(compress(B, unimportance))
+        x2_i_names = list(
+            compress(["", "x1", "x2", "x3", "x12", "x13", "x23", "x123", "x1^2", "x2^2", "x3^2"], unimportance))
+        eq = " ".join(["".join(i) for i in zip(list(map(lambda x: "{:+.2f}".format(x), b_to_print)), x2_i_names)])
+        print("*" * 100)
+        print("Додаткове завдання:\nРівняння регресії тільки із незначимих коефіціентів: y = " + eq)
+        print("*" * 100)
+        
         for j in range(self.n):
             self.y_new.append(self.regression([self.x[j][ts.index(i)] for i in ts if i in res], final_k))
 
